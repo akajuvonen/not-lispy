@@ -15,6 +15,10 @@ def _subtract(arguments):
 ENV = {'+': _add, '-': _subtract}
 
 
+def read(program):
+    return parse(tokenize(program))
+
+
 def tokenize(program):
     return program.replace('(', ' ( ').replace(')', ' ) ').split()
 
@@ -32,6 +36,7 @@ def _parse(current_token, remaining_tokens):
             l.append(_parse(current_token, remaining_tokens))
         return l
     else:
+        # Return int if possible, otherwise str
         try:
             return int(current_token)
         except ValueError:
@@ -49,12 +54,7 @@ def evaluate(expression, environment):
 
 def main():
     program = '(+ (- 5 3 1) 12 1)'
-    tokenized = tokenize(program)
-    print(f'Tokenized: {tokenized}')
-    parsed = parse(tokenized)
-    print(f'Parsed: {parsed}')
-    evaluated = evaluate(parsed, ENV)
-    print(f'Evaluated: {evaluated}')
+    print(f"Program '{program}' evaluates to {evaluate(read(program), ENV)}")
 
 
 if __name__ == '__main__':
