@@ -13,7 +13,14 @@ def _subtract(arguments: List[int]) -> int:
     return result
 
 
-ENV = {'+': _add, '-': _subtract}  # Our tiny standard environment for now
+def _multiply(arguments: List[int]) -> int:
+    result = arguments[0]
+    for argument in arguments[1:]:
+        result *= argument
+    return result
+
+
+ENV = {'+': _add, '-': _subtract, '*': _multiply}  # Our tiny standard environment for now
 
 
 def read(program: str) -> List[Union[List, int, str]]:
@@ -54,7 +61,7 @@ def evaluate(expression: Union[int, str], environment: Dict[str, Callable]) -> U
 
 
 def main():
-    program = '(+ (- 5 3 1) 12 1)'
+    program = '(* 2 (+ (- 5 3 1) 12 1))'
     print(f"Program '{program}' evaluates to {evaluate(read(program), ENV)}")
 
 
