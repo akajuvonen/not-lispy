@@ -1,9 +1,18 @@
-import operator
 from collections import deque
-from typing import Deque, List
 
 
-ENV = {'+': operator.add, '-': operator.sub}
+def _add(arguments):
+    return sum(arguments)
+
+
+def _subtract(arguments):
+    result = arguments[0]
+    for argument in arguments[1:]:
+        result -= argument
+    return result
+
+
+ENV = {'+': _add, '-': _subtract}
 
 
 def tokenize(program):
@@ -35,11 +44,11 @@ def evaluate(expression, environment):
     else:
         procedure = environment[expression[0]]
         arguments = [evaluate(a, environment) for a in expression[1:]]
-        return procedure(*arguments)
+        return procedure(arguments)
 
 
 def main():
-    program = '(+ 1 (- 3 2))'
+    program = '(+ (- 5 3 1) 12 1)'
     tokenized = tokenize(program)
     print(f'Tokenized: {tokenized}')
     parsed = parse(tokenized)
