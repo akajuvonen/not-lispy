@@ -1,35 +1,36 @@
 from collections import deque
+from typing import Callable, Deque, Dict, List, Union
 
 
-def _add(arguments):
+def _add(arguments: List[int]) -> int:
     return sum(arguments)
 
 
-def _subtract(arguments):
+def _subtract(arguments: List[int]) -> int:
     result = arguments[0]
     for argument in arguments[1:]:
         result -= argument
     return result
 
 
-ENV = {'+': _add, '-': _subtract}
+ENV = {'+': _add, '-': _subtract}  # Our tiny standard environment for now
 
 
-def read(program):
+def read(program: str) -> List[Union[List, int, str]]:
     return parse(tokenize(program))
 
 
-def tokenize(program):
+def tokenize(program: str) -> List[str]:
     return program.replace('(', ' ( ').replace(')', ' ) ').split()
 
 
-def parse(tokens):
-    tokens = deque(tokens)
+def parse(tokens_list: List[str]) -> List[Union[List, int, str]]:
+    tokens = deque(tokens_list)  # convert to deque since we do a lot of popping from the beginning
     first_token = tokens.popleft()
     return _parse(first_token, tokens)
 
 
-def _parse(current_token, remaining_tokens):
+def _parse(current_token: str, remaining_tokens: Deque[str]):
     if current_token == '(':
         l = []
         while (current_token := remaining_tokens.popleft()) != ')':
@@ -43,7 +44,7 @@ def _parse(current_token, remaining_tokens):
             return current_token
 
 
-def evaluate(expression, environment):
+def evaluate(expression: Union[int, str], environment: Dict[str, Callable]) -> Union[int, Callable]:
     if isinstance(expression, int):
         return expression
     else:
