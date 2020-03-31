@@ -5,3 +5,9 @@ A Lisp interpreter in Python. Many people have named similar repos as "LisPy" or
 This repo is intended only for learning and experimentation purposes at the moment. There will be missing features, mistakes and nonoptimal design patterns.
 
 Everything will probably be loosely based on [Make a Lisp](https://github.com/kanaka/mal) and the excellent posts [here](https://norvig.com/lispy.html) and [here](https://norvig.com/lispy2.html).
+
+## Current status
+
+Only supports integers and a few basic operations (addition, subtraction, multiplication), and they support arbitrary number of arguments. Numbers don't have any proper class yet, they are just ints. Currently it's basically a calculator without a REPL. For example, `eval(read('(+ 1 (* 2 3))'))` evaluates to `7` as it should.
+
+Next, floats and divisions will be added since those are trivial. I need to add some classes to handle atoms in a better way. That should also make typing less messy.
