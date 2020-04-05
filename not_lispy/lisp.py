@@ -1,33 +1,23 @@
+import operator
 from collections import deque
 from typing import Callable, Deque, Dict, List, Union
 
-
-def _add(arguments: List[int]) -> int:
-    return sum(arguments)
+import attr
 
 
-def _subtract(arguments: List[int]) -> int:
-    result = arguments[0]
-    for argument in arguments[1:]:
-        result -= argument
-    return result
+@attr.s(auto_attribs=True)
+class Operation:
+    function: Callable
+
+    def __call__(self, arguments: List[int]) -> int:
+        """Apply a given function to all arguments one by one."""
+        result = arguments[0]
+        for argument in arguments[1:]:
+            result = self.function(result, argument)
+        return result
 
 
-def _multiply(arguments: List[int]) -> int:
-    result = arguments[0]
-    for argument in arguments[1:]:
-        result *= argument
-    return result
-
-
-def _divide(arguments: List[int]) -> int:
-    result = arguments[0]
-    for argument in arguments[1:]:
-        result //= argument
-    return result
-
-
-ENV = {'+': _add, '-': _subtract, '*': _multiply, '/': _divide}  # Our tiny standard environment for now
+ENV = {'+': Operation(operator.add), '-': Operation(operator.sub), '*': Operation(operator.mul), '/': Operation(operator.floordiv)}
 
 
 def read(program: str) -> List[Union[List, int, str]]:
