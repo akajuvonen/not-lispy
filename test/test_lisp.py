@@ -8,3 +8,4 @@ def test_tokenize():
 
 def test_evaluate():
     assert evaluate(['+', 1, ['*', 2, 3]], ENV) == 7
+    assert evaluate(['/', ['-', 10, 4], 2], ENV) == 3

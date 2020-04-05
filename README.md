@@ -8,6 +8,5 @@ Everything will probably be loosely based on [Make a Lisp](https://github.com/ka
 
 ## Current status
 
-Only supports integers and a few basic operations (addition, subtraction, multiplication), and they support arbitrary number of arguments. Numbers don't have any proper class yet, they are just ints. Currently it's basically a calculator without a REPL. For example, `eval(read('(+ 1 (* 2 3))'))` evaluates to `7` as it should.
+Only supports integers and a few basic operations (addition, subtraction, multiplication, division), and they support arbitrary number of arguments. Numbers don't have any proper class yet, they are just ints. Currently it's basically a calculator without a REPL. For example, `eval(read('(+ 1 (* 2 3))'))` evaluates to `7` as it should. Calculation support integers only for now.
 
-Next, floats and divisions will be added since those are trivial. I need to add some classes to handle atoms in a better way. That should also make typing less messy.
