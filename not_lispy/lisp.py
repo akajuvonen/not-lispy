@@ -17,7 +17,8 @@ class Operation:
         return result
 
 
-ENV = {'+': Operation(operator.add), '-': Operation(operator.sub), '*': Operation(operator.mul), '/': Operation(operator.floordiv)}
+ENV = {'+': Operation(operator.add), '-': Operation(operator.sub), '*': Operation(operator.mul),
+       '/': Operation(operator.floordiv)}
 
 
 def read(program: str) -> List[Union[List, int, str]]:
@@ -36,10 +37,10 @@ def parse(tokens_list: List[str]) -> List[Union[List, int, str]]:
 
 def _parse(current_token: str, remaining_tokens: Deque[str]):
     if current_token == '(':
-        l = []
+        parsed_list = []
         while (current_token := remaining_tokens.popleft()) != ')':
-            l.append(_parse(current_token, remaining_tokens))
-        return l
+            parsed_list.append(_parse(current_token, remaining_tokens))
+        return parsed_list
     else:
         # Return int if possible, otherwise str
         try:
