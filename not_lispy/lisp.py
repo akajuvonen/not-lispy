@@ -33,7 +33,7 @@ ENV = {'+': Operation(operator.add), '-': Operation(operator.sub), '*': Operatio
        '/': Operation(operator.floordiv)}
 
 
-def read(program: str) -> Union[List, Atom]:
+def read(program: str) -> List[Union[List, Atom]]:
     return parse(tokenize(program))
 
 
@@ -41,10 +41,13 @@ def tokenize(program: str) -> List[str]:
     return program.replace('(', ' ( ').replace(')', ' ) ').split()
 
 
-def parse(tokens_list: List[str]) -> Union[List, Atom]:
+def parse(tokens_list: List[str]) -> List[Union[List, Atom]]:
     tokens = deque(tokens_list)  # convert to deque since we do a lot of popping from the beginning
     first_token = tokens.popleft()
-    return _parse(first_token, tokens)
+    parsed = _parse(first_token, tokens)
+    if not isinstance(parsed, List):
+        raise SyntaxError('Expression must be enclosed in parentheses')
+    return parsed
 
 
 def _parse(current_token: str, remaining_tokens: Deque[str]) -> Union[List, Atom]:
