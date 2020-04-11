@@ -17,6 +17,7 @@ class Operation:
         return result
 
 
+# TODO: factory to choose subclass
 class Atom:
     pass
 
@@ -54,11 +55,10 @@ def _parse(current_token: str, remaining_tokens: Deque[str]):
             parsed_list.append(_parse(current_token, remaining_tokens))
         return parsed_list
     else:
-        # Return int if possible, otherwise str
         try:
-            return int(current_token)
+            return Integer(current_token)
         except ValueError:
-            return current_token
+            return Symbol(current_token)
 
 
 def evaluate(expression: Union[int, str], environment: Dict[str, Callable]) -> Union[int, Callable]:
