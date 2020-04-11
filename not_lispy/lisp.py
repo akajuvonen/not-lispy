@@ -17,6 +17,18 @@ class Operation:
         return result
 
 
+class Atom:
+    pass
+
+
+class Integer(Atom, int):
+    pass
+
+
+class Symbol(Atom, str):
+    pass
+
+
 ENV = {'+': Operation(operator.add), '-': Operation(operator.sub), '*': Operation(operator.mul),
        '/': Operation(operator.floordiv)}
 
