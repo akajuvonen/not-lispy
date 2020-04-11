@@ -1,6 +1,6 @@
 import operator
 from collections import deque
-from typing import Callable, Deque, Dict, List, Union
+from typing import Any, Callable, Deque, Dict, List, Union
 
 import attr
 
@@ -17,11 +17,23 @@ class Operation:
         return result
 
 
+class Atom:
+    pass
+
+
+class Integer(Atom, int):
+    pass
+
+
+class Symbol(Atom, str):
+    pass
+
+
 ENV = {'+': Operation(operator.add), '-': Operation(operator.sub), '*': Operation(operator.mul),
        '/': Operation(operator.floordiv)}
 
 
-def read(program: str) -> List[Union[List, int, str]]:
+def read(program: str) -> List[Union[List, Atom]]:
     return parse(tokenize(program))
 
 
@@ -29,24 +41,26 @@ def tokenize(program: str) -> List[str]:
     return program.replace('(', ' ( ').replace(')', ' ) ').split()
 
 
-def parse(tokens_list: List[str]) -> List[Union[List, int, str]]:
+def parse(tokens_list: List[str]) -> List[Union[List, Atom]]:
     tokens = deque(tokens_list)  # convert to deque since we do a lot of popping from the beginning
     first_token = tokens.popleft()
-    return _parse(first_token, tokens)
+    parsed = _parse(first_token, tokens)
+    if not isinstance(parsed, List):
+        raise SyntaxError('Expression must be enclosed in parentheses')
+    return parsed
 
 
-def _parse(current_token: str, remaining_tokens: Deque[str]):
+def _parse(current_token: str, remaining_tokens: Deque[str]) -> Union[List, Atom]:
     if current_token == '(':
-        parsed_list = []
+        parsed_list: List[Union[List, Atom]] = []
         while (current_token := remaining_tokens.popleft()) != ')':
             parsed_list.append(_parse(current_token, remaining_tokens))
         return parsed_list
     else:
-        # Return int if possible, otherwise str
         try:
-            return int(current_token)
+            return Integer(current_token)
         except ValueError:
-            return current_token
+            return Symbol(current_token)
 
 
 def evaluate(expression: Union[int, str], environment: Dict[str, Callable]) -> Union[int, Callable]:
