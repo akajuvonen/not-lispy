@@ -1,6 +1,6 @@
 import operator
 from collections import deque
-from typing import Callable, Deque, Dict, List, Union
+from typing import Any, Callable, Deque, Dict, List, Union
 
 import attr
 
@@ -17,7 +17,6 @@ class Operation:
         return result
 
 
-# TODO: factory to choose subclass
 class Atom:
     pass
 
@@ -34,7 +33,7 @@ ENV = {'+': Operation(operator.add), '-': Operation(operator.sub), '*': Operatio
        '/': Operation(operator.floordiv)}
 
 
-def read(program: str) -> List[Union[List, int, str]]:
+def read(program: str) -> Union[List, Atom]:
     return parse(tokenize(program))
 
 
@@ -42,15 +41,15 @@ def tokenize(program: str) -> List[str]:
     return program.replace('(', ' ( ').replace(')', ' ) ').split()
 
 
-def parse(tokens_list: List[str]) -> List[Union[List, int, str]]:
+def parse(tokens_list: List[str]) -> Union[List, Atom]:
     tokens = deque(tokens_list)  # convert to deque since we do a lot of popping from the beginning
     first_token = tokens.popleft()
     return _parse(first_token, tokens)
 
 
-def _parse(current_token: str, remaining_tokens: Deque[str]):
+def _parse(current_token: str, remaining_tokens: Deque[str]) -> Union[List, Atom]:
     if current_token == '(':
-        parsed_list = []
+        parsed_list: List[Union[List, Atom]] = []
         while (current_token := remaining_tokens.popleft()) != ')':
             parsed_list.append(_parse(current_token, remaining_tokens))
         return parsed_list
