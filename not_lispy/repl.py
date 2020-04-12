@@ -1,4 +1,4 @@
-from not_lispy import read, evaluate
+from not_lispy import evaluate, read
 
 
 def repl():
