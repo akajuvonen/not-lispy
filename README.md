@@ -6,8 +6,16 @@ This repo is intended only for learning and experimentation purposes at the mome
 
 Everything will probably be loosely based on [Make a Lisp](https://github.com/kanaka/mal) and the excellent posts [here](https://norvig.com/lispy.html) and [here](https://norvig.com/lispy2.html).
 
-## Current status
+## Usage
 
-Only supports integers and a few basic operations (addition, subtraction, multiplication, division), and they support arbitrary number of arguments. Numbers don't have any proper class yet, they are just ints. Currently it's basically a calculator without a REPL. For example, `eval(read('(+ 1 (* 2 3))'))` evaluates to `7` as it should. Calculation support integers only for now.
+Read and eval function are available by importing them: `from not_lispy import read, eval`. Then you can evaluate individual expressions, e.g.,  `eval(read('(+ 1 2)'))`. 
 
-Version `0.2.0` adds class `Atom` and its subclasses `Integer` and `Symbol` (`+`, `-` etc.) for better typing.
+The only available number types are integers. Only basic "calculator" operations are supported for now:
+- addition `+`
+- subtraction `-`
+- multiplication `*`
+- division `/` (note: since only integers available, this is floor division)
+
+In addition, a basic repl is available through command `notlispy-repl`. You can exit by typing `(exit)`.
+
+For now only individual expressions can be evaluated. There is only global environment, and variables cannot be defined yet (so no `define`, `lambda` etc.). I plan to add support for local environments next along with lambda function definitions.
