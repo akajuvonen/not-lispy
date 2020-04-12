@@ -1,10 +1,6 @@
-from not_lispy.lisp import read, evaluate
+from not_lispy import read, evaluate
 
 
-def main():
+def repl():
     while (expression := input('not-lispy>')) != '(exit)':
         print(evaluate(read(expression)))
-
-
-if __name__ == '__main__':
-    main()

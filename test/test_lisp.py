@@ -1,5 +1,5 @@
 import pytest
-from not_lispy.lisp import read, test_evaluate
+from not_lispy import read, evaluate
 
 
 def test_tokenize():
