@@ -8,6 +8,8 @@ Everything will probably be loosely based on [Make a Lisp](https://github.com/ka
 
 ## Current status
 
-Only supports integers and a few basic operations (addition, subtraction, multiplication, division), and they support arbitrary number of arguments. Numbers don't have any proper class yet, they are just ints. Currently it's basically a calculator without a REPL. For example, `eval(read('(+ 1 (* 2 3))'))` evaluates to `7` as it should. Calculation support integers only for now.
+Read and eval function are available by importing them: `from not_lispy import read, eval`. Then you can evaluate individual expressions, e.g.,  `eval(read('(+ 1 2)'))`. Syntax checking is not perfect, and currently only basic calculator operations are supported (`+`, `-`, `*`, and `/`). Only integers are available at the moment, so division always just performs floor division (e.g., `(/ 3 2)` evaluates to `1`. In short, the interpreter is basically nothing but a calculator (and not a great one, either).
 
-Version `0.2.0` adds class `Atom` and its subclasses `Integer` and `Symbol` (`+`, `-` etc.) for better typing.
+A simple repl is available after installation as command `notlispy-repl`, which you can exit by typing `(exit)`.
+
+Notably `define`, `lambda` or frankly anything not mentioned above is not supported, meaning there is only default gloval environment. Therefore for now only individual expressions can be evaluated.
