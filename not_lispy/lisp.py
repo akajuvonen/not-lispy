@@ -63,7 +63,7 @@ def _parse(current_token: str, remaining_tokens: Deque[str]) -> Union[List, Atom
             return Symbol(current_token)
 
 
-def evaluate(expression: Union[int, str], environment: Dict[str, Callable] = ENV) -> Union[int, Callable]:
+def evaluate(expression: Union[int, str], environment: Dict[str, Operation] = ENV) -> int:
     if isinstance(expression, int):
         return expression
     else:
