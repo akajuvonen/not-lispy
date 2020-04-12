@@ -63,7 +63,7 @@ def _parse(current_token: str, remaining_tokens: Deque[str]) -> Union[List, Atom
             return Symbol(current_token)
 
 
-def evaluate(expression: Union[int, str], environment: Dict[str, Callable]) -> Union[int, Callable]:
+def evaluate(expression: Union[int, str], environment: Dict[str, Callable] = ENV) -> Union[int, Callable]:
     if isinstance(expression, int):
         return expression
     else:
@@ -74,7 +74,7 @@ def evaluate(expression: Union[int, str], environment: Dict[str, Callable]) -> U
 
 def main():
     program = '(/ (+ (- 5 3 1) 12 1) 2)'
-    print(f"Program '{program}' evaluates to {evaluate(read(program), ENV)}")
+    print(f"Program '{program}' evaluates to {evaluate(read(program))}")
 
 
 if __name__ == '__main__':

@@ -1,5 +1,5 @@
 import pytest
-from not_lispy.lisp import read, evaluate, ENV
+from not_lispy.lisp import read, test_evaluate
 
 
 def test_tokenize():
@@ -7,5 +7,5 @@ def test_tokenize():
 
 
 def test_evaluate():
-    assert evaluate(['+', 1, ['*', 2, 3]], ENV) == 7
-    assert evaluate(['/', ['-', 10, 4], 2], ENV) == 3
+    assert evaluate(['+', 1, ['*', 2, 3]]) == 7
+    assert evaluate(['/', ['-', 10, 4], 2]) == 3
