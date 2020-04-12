@@ -6,10 +6,16 @@ This repo is intended only for learning and experimentation purposes at the mome
 
 Everything will probably be loosely based on [Make a Lisp](https://github.com/kanaka/mal) and the excellent posts [here](https://norvig.com/lispy.html) and [here](https://norvig.com/lispy2.html).
 
-## Current status
+## Usage
 
-Read and eval function are available by importing them: `from not_lispy import read, eval`. Then you can evaluate individual expressions, e.g.,  `eval(read('(+ 1 2)'))`. Syntax checking is not perfect, and currently only basic calculator operations are supported (`+`, `-`, `*`, and `/`). Only integers are available at the moment, so division always just performs floor division (e.g., `(/ 3 2)` evaluates to `1`. In short, the interpreter is basically nothing but a calculator (and not a great one, either).
+Read and eval function are available by importing them: `from not_lispy import read, eval`. Then you can evaluate individual expressions, e.g.,  `eval(read('(+ 1 2)'))`. 
 
-A simple repl is available after installation as command `notlispy-repl`, which you can exit by typing `(exit)`.
+The only available number types are integers. Only basic "calculator" operations are supported for now:
+- addition `+`
+- subtraction `-`
+- multiplication `*`
+- division `/` (note: since only integers available, this is floor division)
 
-Notably `define`, `lambda` or frankly anything not mentioned above is not supported, meaning there is only default gloval environment. Therefore for now only individual expressions can be evaluated.
+In addition, a basic repl is available through command `notlispy-repl`. You can exit by typing `(exit)`.
+
+For now only individual expressions can be evaluated. There is only global environment, and variables cannot be defined yet (so no `define`, `lambda` etc.). I plan to add support for local environments next along with lambda function definitions.
