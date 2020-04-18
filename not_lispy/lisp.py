@@ -41,8 +41,10 @@ class Procedure:
         return evaluate(self.body, self.environment)
 
 
-ENV = {'+': Operation(operator.add), '-': Operation(operator.sub), '*': Operation(operator.mul),
-       '/': Operation(operator.floordiv)}
+ENV = {Symbol('+'): Operation(operator.add),
+       Symbol('-'): Operation(operator.sub),
+       Symbol('*'): Operation(operator.mul),
+       Symbol('/'): Operation(operator.floordiv)}
 
 
 def read(program: str) -> List[Union[List, Atom]]:
@@ -75,7 +77,7 @@ def _parse(current_token: str, remaining_tokens: Deque[str]) -> Union[List, Atom
             return Symbol(current_token)
 
 
-def evaluate(expression: Union[int, str], environment: Dict[str, Operation] = ENV) -> int:
+def evaluate(expression: Union[Integer, Symbol], environment: Dict[Symbol, Operation] = ENV) -> Union[Operation, int]:
     if isinstance(expression, Integer):
         return expression
     elif isinstance(expression, Symbol):
