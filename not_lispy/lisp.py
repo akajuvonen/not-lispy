@@ -5,18 +5,6 @@ from typing import Any, Callable, Deque, Dict, List, Union
 import attr
 
 
-@attr.s(auto_attribs=True)
-class Operation:
-    function: Callable
-
-    def __call__(self, arguments: List[int]) -> int:
-        """Apply a given function to all arguments one by one."""
-        result = arguments[0]
-        for argument in arguments[1:]:
-            result = self.function(result, argument)
-        return result
-
-
 class Atom:
     pass
 
@@ -31,14 +19,26 @@ class Symbol(Atom, str):
 
 @attr.s(auto_attribs=True)
 class Procedure:
-    parameters : List
-    body: List
-    environment: Dict
+    parameters : List[Symbol]
+    body: List[Atom]
+    environment: Dict[Symbol, Any]
 
-    def __call__(self, arguments):
+    def __call__(self, arguments: List[Integer]) -> Union[Integer, Callable]:
         for parameter, value in zip(self.parameters, arguments):
             self.environment[parameter] = value
         return evaluate(self.body, self.environment)
+
+
+@attr.s(auto_attribs=True)
+class Operation():
+    function: Callable
+
+    def __call__(self, arguments: List[Integer]) -> Integer:
+        """Apply a given function to all arguments one by one."""
+        result = arguments[0]
+        for argument in arguments[1:]:
+            result = self.function(result, argument)
+        return Integer(result)
 
 
 ENV = {Symbol('+'): Operation(operator.add),
@@ -77,7 +77,7 @@ def _parse(current_token: str, remaining_tokens: Deque[str]) -> Union[List, Atom
             return Symbol(current_token)
 
 
-def evaluate(expression: Union[Integer, Symbol], environment: Dict[Symbol, Operation] = ENV) -> Union[Operation, int]:
+def evaluate(expression, environment: Dict[Symbol, Any] = ENV) -> Union[Integer, Callable]:
     if isinstance(expression, Integer):
         return expression
     elif isinstance(expression, Symbol):
