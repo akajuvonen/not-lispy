@@ -89,6 +89,8 @@ def evaluate(expression, environment: Dict[Symbol, Any] = ENV) -> Union[Integer,
     else:
         procedure = evaluate(expression[0])
         arguments = [evaluate(a, environment) for a in expression[1:]]
+        if not callable(procedure):
+            raise SyntaxError(f"{procedure} not a valid procedure")  # this should not happen but needed for typing
         return procedure(arguments)
 
 
