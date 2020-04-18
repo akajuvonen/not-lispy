@@ -5,18 +5,6 @@ from typing import Any, Callable, Deque, Dict, List, Union
 import attr
 
 
-@attr.s(auto_attribs=True)
-class Operation:
-    function: Callable
-
-    def __call__(self, arguments: List[int]) -> int:
-        """Apply a given function to all arguments one by one."""
-        result = arguments[0]
-        for argument in arguments[1:]:
-            result = self.function(result, argument)
-        return result
-
-
 class Atom:
     pass
 
@@ -29,8 +17,36 @@ class Symbol(Atom, str):
     pass
 
 
-ENV = {'+': Operation(operator.add), '-': Operation(operator.sub), '*': Operation(operator.mul),
-       '/': Operation(operator.floordiv)}
+@attr.s(auto_attribs=True)
+class Procedure:
+    """User-defined procedure."""
+    parameters: List[Symbol]
+    body: List[Atom]
+    environment: Dict[Symbol, Any]
+
+    def __call__(self, arguments: List[Integer]) -> Union[Integer, Callable]:
+        for parameter, value in zip(self.parameters, arguments):
+            self.environment[parameter] = value
+        return evaluate(self.body, self.environment)
+
+
+@attr.s(auto_attribs=True)
+class Operation():
+    """A primitive operation that can be applied to arbitrary number of arguments."""
+    function: Callable
+
+    def __call__(self, arguments: List[Integer]) -> Integer:
+        """Apply a given function to all arguments one by one."""
+        result = arguments[0]
+        for argument in arguments[1:]:
+            result = self.function(result, argument)
+        return Integer(result)
+
+
+ENV = {Symbol('+'): Operation(operator.add),
+       Symbol('-'): Operation(operator.sub),
+       Symbol('*'): Operation(operator.mul),
+       Symbol('/'): Operation(operator.floordiv)}
 
 
 def read(program: str) -> List[Union[List, Atom]]:
@@ -63,18 +79,28 @@ def _parse(current_token: str, remaining_tokens: Deque[str]) -> Union[List, Atom
             return Symbol(current_token)
 
 
-def evaluate(expression: Union[int, str], environment: Dict[str, Operation] = ENV) -> int:
-    if isinstance(expression, int):
+def evaluate(expression, environment: Dict[Symbol, Any] = ENV) -> Union[Integer, Callable]:
+    if isinstance(expression, Integer):  # number
         return expression
-    else:
-        procedure = environment[expression[0]]
+    elif isinstance(expression, Symbol):  # symbol lookup
+        return environment[expression]
+    elif expression[0] == 'lambda':  # user-defined procedure
+        parameters = expression[1]
+        body = expression[2]
+        return Procedure(parameters, body, environment)
+    else:  # procedure call
+        procedure = evaluate(expression[0])
         arguments = [evaluate(a, environment) for a in expression[1:]]
+        if not callable(procedure):
+            raise SyntaxError(f"{procedure} not a valid procedure")  # this should not happen but needed for typing
         return procedure(arguments)
 
 
 def main():
-    program = '(/ (+ (- 5 3 1) 12 1) 2)'
-    print(f"Program '{program}' evaluates to {evaluate(read(program))}")
+    program = '((lambda (x y) (+ x y)) 1 2)'
+    ast = read(program)
+    evaluated = evaluate(ast)
+    print(evaluated)
 
 
 if __name__ == '__main__':
