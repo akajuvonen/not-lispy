@@ -10,11 +10,11 @@ Everything will probably be loosely based on [Make a Lisp](https://github.com/ka
 
 Read and eval function are available by importing them: `from not_lispy import read, eval`. Then you can evaluate individual expressions, e.g.,  `eval(read('(+ 1 2)'))`. 
 
-The only available number types are integers. Only basic "calculator" operations are supported for now:
+The only available number types are integers since I'm aiming for simplicity at firt. Built-in basic "calculator" operations are supported:
 - addition `+`
 - subtraction `-`
 - multiplication `*`
-- division `/` (note: since only integers available, this is floor division)
+- division `/` (note: since only integers available, this is floor division, i.e., `(/ 3 2) => 1`)
 
 In addition, a basic repl is available through command `notlispy-repl`. You can exit by typing `(exit)`.
 
