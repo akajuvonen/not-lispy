@@ -19,7 +19,8 @@ class Symbol(Atom, str):
 
 @attr.s(auto_attribs=True)
 class Procedure:
-    parameters : List[Symbol]
+    """User-defined procedure."""
+    parameters: List[Symbol]
     body: List[Atom]
     environment: Dict[Symbol, Any]
 
@@ -31,6 +32,7 @@ class Procedure:
 
 @attr.s(auto_attribs=True)
 class Operation():
+    """A primitive operation that can be applied to arbitrary number of arguments."""
     function: Callable
 
     def __call__(self, arguments: List[Integer]) -> Integer:
@@ -78,15 +80,15 @@ def _parse(current_token: str, remaining_tokens: Deque[str]) -> Union[List, Atom
 
 
 def evaluate(expression, environment: Dict[Symbol, Any] = ENV) -> Union[Integer, Callable]:
-    if isinstance(expression, Integer):
+    if isinstance(expression, Integer):  # number
         return expression
-    elif isinstance(expression, Symbol):
+    elif isinstance(expression, Symbol):  # symbol lookup
         return environment[expression]
-    elif expression[0] == 'lambda':
+    elif expression[0] == 'lambda':  # user-defined procedure
         parameters = expression[1]
         body = expression[2]
         return Procedure(parameters, body, environment)
-    else:
+    else:  # procedure call
         procedure = evaluate(expression[0])
         arguments = [evaluate(a, environment) for a in expression[1:]]
         if not callable(procedure):
