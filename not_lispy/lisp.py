@@ -29,6 +29,18 @@ class Symbol(Atom, str):
     pass
 
 
+@attr.s(auto_attribs=True)
+class Procedure:
+    parameters : List
+    body: List
+    environment: Dict
+
+    def __call__(self, arguments):
+        for parameter, value in zip(self.parameters, arguments):
+            self.environment[parameter] = value
+        return evaluate(self.body, self.environment)
+
+
 ENV = {'+': Operation(operator.add), '-': Operation(operator.sub), '*': Operation(operator.mul),
        '/': Operation(operator.floordiv)}
 
@@ -68,6 +80,10 @@ def evaluate(expression: Union[int, str], environment: Dict[str, Operation] = EN
         return expression
     elif isinstance(expression, Symbol):
         return environment[expression]
+    elif expression[0] == 'lambda':
+        parameters = expression[1]
+        body = expression[2]
+        return Procedure(parameters, body, environment)
     else:
         procedure = evaluate(expression[0])
         arguments = [evaluate(a, environment) for a in expression[1:]]
@@ -75,8 +91,10 @@ def evaluate(expression: Union[int, str], environment: Dict[str, Operation] = EN
 
 
 def main():
-    program = '(/ (+ (- 5 3 1) 12 1) 2)'
-    print(f"Program '{program}' evaluates to {evaluate(read(program))}")
+    program = '((lambda (x y) (+ x y)) 1 2)'
+    ast = read(program)
+    evaluated = evaluate(ast)
+    print(evaluated)
 
 
 if __name__ == '__main__':
