@@ -3,6 +3,7 @@ from collections import deque
 from typing import Any, Callable, Deque, Dict, List, Union
 
 import attr
+import click
 
 
 class Atom:
@@ -98,12 +99,7 @@ def evaluate(expression, environment: Dict[Symbol, Any] = ENV) -> Union[Integer,
         return procedure(arguments)
 
 
-def main():
-    program = '((lambda (x y) (+ x y)) 1 2)'
-    ast = read(program)
-    evaluated = evaluate(ast)
-    print(evaluated)
-
-
-if __name__ == '__main__':
-    main()
+@click.command()
+@click.argument('filename')
+def execute(filename):
+    print(f'TODO: load and execute program {filename}')

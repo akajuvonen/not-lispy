@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='not-lispy',
-    version='0.4.1',
+    version='0.5.0',
     description='A Lisp interpreter in Python',
     author='Antti Juvonen',
     packages=find_packages(),
@@ -12,4 +12,5 @@ setup(
     entry_points='''
     [console_scripts]
     notlispy-repl=not_lispy:repl
+    notlispy=not_lispy.lisp:execute
     ''')
