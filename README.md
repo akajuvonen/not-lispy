@@ -8,7 +8,7 @@ Everything will probably be loosely based on [Make a Lisp](https://github.com/ka
 
 ## Usage
 
-> Note: in the following, `(+ 1 2) => 3 ` means expression `(+ 1 2)` evaluates to `3`.
+**Note:** in the following, `(+ 1 2) => 3 ` means expression `(+ 1 2)` evaluates to `3`.
 
 Read and eval function are available by importing them: `from not_lispy import read, eval`. Then you can evaluate individual expressions, e.g.,  `eval(read('(+ 1 2)'))`. 
 
