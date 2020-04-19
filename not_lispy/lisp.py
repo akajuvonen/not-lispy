@@ -84,6 +84,8 @@ def evaluate(expression, environment: Dict[Symbol, Any] = ENV) -> Union[Integer,
         return expression
     elif isinstance(expression, Symbol):  # symbol lookup
         return environment[expression]
+    elif expression[0] == 'define':
+        environment[expression[1]] = evaluate(expression[2])
     elif expression[0] == 'lambda':  # user-defined procedure
         parameters = expression[1]
         body = expression[2]
