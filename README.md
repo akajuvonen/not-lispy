@@ -18,7 +18,12 @@ The only available number types are integers since I'm aiming for simplicity at 
 - multiplication `*`
 - division `/` (note: since only integers available, this is floor division, i.e., `(/ 3 2) => 1`)
 
-User-defined procedures are supported, but at the moment there is only one global environment. Lack of local variable scope means procedure parameter names must not clash. This will be fixed in the next version. Example: `((lambda (x y) (+ x y)) 1 2) => 3`. Also, all procedures must be defined exactly `(lambda (parameters) (body))`, parentheses should not be omitted (no implicit lists).
+Custom procedures are supported, but at the moment there is only one global environment. Lack of local variable scope means procedure parameter names must not clash. This will be fixed in the next version. Example: `((lambda (x y) (+ x y)) 1 2) => 3`. Also, all procedures must be defined exactly `(lambda (parameters) (body))`, parentheses should not be omitted (no implicit lists).
+
+Variables and procedures can be defined using `define`, e.g.,
+- `(define x 1)`
+- `(define addone (lambda (y) (+ y 1)))`
+- `(addone x) => 2`
 
 In addition, a basic repl is available through command `notlispy-repl`. You can exit by typing `(exit)`.
 
