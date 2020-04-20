@@ -1,6 +1,6 @@
 import operator
 from collections import deque
-from typing import Any, Callable, Deque, Dict, List, Union
+from typing import Any, Callable, Deque, Dict, List, Optional, Union
 
 import attr
 import click
@@ -25,7 +25,7 @@ class Procedure:
     body: List[Atom]
     environment: Dict[Symbol, Any]
 
-    def __call__(self, arguments: List[Integer]) -> Union[Integer, Callable]:
+    def __call__(self, arguments: List[Integer]) -> Optional[Union[Integer, Callable]]:
         for parameter, value in zip(self.parameters, arguments):
             self.environment[parameter] = value
         return evaluate(self.body, self.environment)
@@ -80,13 +80,14 @@ def _parse(current_token: str, remaining_tokens: Deque[str]) -> Union[List, Atom
             return Symbol(current_token)
 
 
-def evaluate(expression, environment: Dict[Symbol, Any] = ENV) -> Union[Integer, Callable]:
+def evaluate(expression, environment: Dict[Symbol, Any] = ENV) -> Optional[Union[Integer, Callable]]:
     if isinstance(expression, Integer):  # number
         return expression
     elif isinstance(expression, Symbol):  # symbol lookup
         return environment[expression]
     elif expression[0] == 'define':
         environment[expression[1]] = evaluate(expression[2])
+        return None  # want to be explicit about returning None here
     elif expression[0] == 'lambda':  # user-defined procedure
         parameters = expression[1]
         body = expression[2]
