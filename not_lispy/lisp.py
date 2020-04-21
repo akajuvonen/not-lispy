@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import operator
 from collections import deque
 from typing import Any, Callable, Deque, Dict, List, Optional, Union
@@ -19,19 +21,6 @@ class Symbol(Atom, str):
 
 
 @attr.s(auto_attribs=True)
-class Procedure:
-    """User-defined procedure."""
-    parameters: List[Symbol]
-    body: List[Atom]
-    environment: Dict[Symbol, Any]
-
-    def __call__(self, arguments: List[Integer]) -> Optional[Union[Integer, Callable]]:
-        for parameter, value in zip(self.parameters, arguments):
-            self.environment[parameter] = value
-        return evaluate(self.body, self.environment)
-
-
-@attr.s(auto_attribs=True)
 class Operation():
     """A primitive operation that can be applied to arbitrary number of arguments."""
     function: Callable
@@ -48,6 +37,31 @@ ENV = {Symbol('+'): Operation(operator.add),
        Symbol('-'): Operation(operator.sub),
        Symbol('*'): Operation(operator.mul),
        Symbol('/'): Operation(operator.floordiv)}
+
+
+@attr.s(auto_attribs=True)
+class Environment:
+    environment: Dict[Symbol, Any] = ENV
+    parent: Optional[Environment] = None
+
+    def update(self, name, value):
+        self.environment[name] = value
+
+    def get(self, name):
+        return self.environment[name]
+
+
+@attr.s(auto_attribs=True)
+class Procedure:
+    """User-defined procedure."""
+    parameters: List[Symbol]
+    body: List[Atom]
+    environment: Environment
+
+    def __call__(self, arguments: List[Integer]) -> Optional[Union[Integer, Callable]]:
+        for parameter, value in zip(self.parameters, arguments):
+            self.environment.update(parameter, value)
+        return evaluate(self.body, self.environment)
 
 
 def read(program: str) -> List[Union[List, Atom]]:
@@ -80,13 +94,15 @@ def _parse(current_token: str, remaining_tokens: Deque[str]) -> Union[List, Atom
             return Symbol(current_token)
 
 
-def evaluate(expression, environment: Dict[Symbol, Any] = ENV) -> Optional[Union[Integer, Callable]]:
+def evaluate(expression, environment: Environment = None) -> Optional[Union[Integer, Callable]]:
+    if environment is None:
+        environment = Environment()
     if isinstance(expression, Integer):  # number
         return expression
     elif isinstance(expression, Symbol):  # symbol lookup
-        return environment[expression]
+        return environment.get(expression)
     elif expression[0] == 'define':
-        environment[expression[1]] = evaluate(expression[2])
+        environment.update(expression[1], expression[2])
         return None  # want to be explicit about returning None here
     elif expression[0] == 'lambda':  # user-defined procedure
         parameters = expression[1]
