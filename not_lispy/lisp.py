@@ -44,7 +44,7 @@ class Environment:
     environment: Dict[Symbol, Any] = ENV
     parent: Optional[Environment] = None
 
-    def update(self, name, value):
+    def add(self, name, value):
         self.environment[name] = value
 
     def get(self, name):
@@ -60,7 +60,7 @@ class Procedure:
 
     def __call__(self, arguments: List[Integer]) -> Optional[Union[Integer, Callable]]:
         for parameter, value in zip(self.parameters, arguments):
-            self.environment.update(parameter, value)
+            self.environment.add(parameter, value)
         return evaluate(self.body, self.environment)
 
 
@@ -102,7 +102,7 @@ def evaluate(expression, environment: Environment = None) -> Optional[Union[Inte
     elif isinstance(expression, Symbol):  # symbol lookup
         return environment.get(expression)
     elif expression[0] == 'define':
-        environment.update(expression[1], expression[2])
+        environment.add(expression[1], expression[2])
         return None  # want to be explicit about returning None here
     elif expression[0] == 'lambda':  # user-defined procedure
         parameters = expression[1]
