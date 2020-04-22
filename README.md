@@ -25,6 +25,9 @@ Variables and procedures can be defined using `define`, e.g.,
 - `(define addone (lambda (x) (+ x 1)))`
 - `(addone x) => 2`
 
-Local variable scopes work in the above example, i.e., variable `x` inside custom procedure `addone` will not clash with the global definition.
+Local variable scopes work in the above example, i.e., variable `x` inside custom procedure `addone` will not clash with the global definition. Therefore, it's possible to do something like this:
+- `(define addone (lambda (x) (+ x 1)))`
+- `(define addtwo (lambda (x) (+ (addone x) (addone x))))`
+- `(addtwo 1) => 3`
 
 In addition, a basic repl is available through command `notlispy-repl`. You can exit by typing `(exit)`.
