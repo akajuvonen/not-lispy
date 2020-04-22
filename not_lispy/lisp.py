@@ -105,7 +105,7 @@ def evaluate(expression, environment: Environment = None) -> Optional[Union[Inte
     elif isinstance(expression, Symbol):  # symbol lookup
         return environment.get(expression)
     elif expression[0] == 'define':
-        environment.add(expression[1], expression[2])
+        environment.add(expression[1], evaluate(expression[2]))
         return None  # want to be explicit about returning None here
     elif expression[0] == 'lambda':  # user-defined procedure
         parameters = expression[1]
