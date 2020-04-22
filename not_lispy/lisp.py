@@ -41,14 +41,17 @@ ENV = {Symbol('+'): Operation(operator.add),
 
 @attr.s(auto_attribs=True)
 class Environment:
-    environment: Dict[Symbol, Any] = ENV
+    environment: Dict[Symbol, Any] = attr.ib(factory=dict)
     parent: Optional[Environment] = None
 
     def add(self, name, value):
         self.environment[name] = value
 
     def get(self, name):
-        return self.environment[name]
+        try:
+            return self.environment[name]
+        except KeyError:
+            self.parent.get(name)
 
 
 @attr.s(auto_attribs=True)
@@ -96,7 +99,7 @@ def _parse(current_token: str, remaining_tokens: Deque[str]) -> Union[List, Atom
 
 def evaluate(expression, environment: Environment = None) -> Optional[Union[Integer, Callable]]:
     if environment is None:
-        environment = Environment()
+        environment = Environment(environment=ENV)
     if isinstance(expression, Integer):  # number
         return expression
     elif isinstance(expression, Symbol):  # symbol lookup
@@ -107,7 +110,7 @@ def evaluate(expression, environment: Environment = None) -> Optional[Union[Inte
     elif expression[0] == 'lambda':  # user-defined procedure
         parameters = expression[1]
         body = expression[2]
-        return Procedure(parameters, body, environment)
+        return Procedure(parameters, body, Environment(parent=environment))
     else:  # procedure call
         procedure = evaluate(expression[0])
         arguments = [evaluate(a, environment) for a in expression[1:]]
