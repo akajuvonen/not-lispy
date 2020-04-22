@@ -18,13 +18,16 @@ The only available number types are integers since I'm aiming for simplicity at 
 - multiplication `*`
 - division `/` (note: since only integers available, this is floor division, i.e., `(/ 3 2) => 1`)
 
-Custom procedures are supported, but at the moment there is only one global environment. Lack of local variable scope means procedure parameter names must not clash. This will be fixed in the next version. Example: `((lambda (x y) (+ x y)) 1 2) => 3`. Also, all procedures must be defined exactly `(lambda (parameters) (body))`, parentheses should not be omitted (no implicit lists).
+Custom procedures are supported using `lambda`. All procedures must be defined exactly `(lambda (parameters) (body))`, parentheses should not be omitted (no implicit lists).
 
 Variables and procedures can be defined using `define`, e.g.,
 - `(define x 1)`
-- `(define addone (lambda (y) (+ y 1)))`
+- `(define addone (lambda (x) (+ x 1)))`
 - `(addone x) => 2`
 
-In addition, a basic repl is available through command `notlispy-repl`. You can exit by typing `(exit)`.
+Local variable scopes work in the above example, i.e., variable `x` inside custom procedure `addone` will not clash with the global definition. Therefore, it's possible to do something like this:
+- `(define addone (lambda (x) (+ x 1)))`
+- `(define addtwo (lambda (x) (+ (addone x) (addone x))))`
+- `(addtwo 1) => 3`
 
-For now only individual expressions can be evaluated. There is only global environment, and variables cannot be defined yet (so no `define`, `lambda` etc.). I plan to add support for local environments next along with lambda function definitions.
+In addition, a basic repl is available through command `notlispy-repl`. You can exit by typing `(exit)`.
