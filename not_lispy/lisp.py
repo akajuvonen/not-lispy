@@ -71,7 +71,7 @@ class Environment:
         try:
             return self.environment[name]
         except KeyError:
-            self.parent.get(name)
+            return self.parent.get(name)
 
 
 GLOBAL_ENV = Environment(environment=ENV)
@@ -137,7 +137,7 @@ def evaluate(expression, environment: Environment = GLOBAL_ENV) -> Optional[Unio
         parameters, body = arguments
         return Procedure(parameters, body, Environment(parent=environment))
     else:  # procedure call
-        procedure = evaluate(form)
+        procedure = evaluate(form, environment)
         arguments = [evaluate(a, environment) for a in arguments]
         if not callable(procedure):
             raise SyntaxError(f"{procedure} not a valid procedure")  # this should not happen but needed for typing
