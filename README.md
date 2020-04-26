@@ -30,4 +30,6 @@ Local variable scopes work in the above example, i.e., variable `x` inside custo
 - `(define addtwo (lambda (x) (+ (addone x) 1)))`
 - `(addtwo 1) => 3`
 
+Conditional statement `if` can be used using syntax `(if (test-expr) then-expr else-epr)`, e.g., `(if (> 3 2) 1 0) => 1`.
+
 In addition, a basic repl is available through command `notlispy-repl`. You can exit by typing `(exit)`.
