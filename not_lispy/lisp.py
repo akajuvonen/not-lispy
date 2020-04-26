@@ -122,19 +122,20 @@ def evaluate(expression, environment: Environment = None) -> Optional[Union[Inte
         return expression
     elif isinstance(expression, Symbol):  # symbol lookup
         return environment.get(expression)
-    elif expression[0] == 'if':
+    procedure, *arguments = expression
+    if procedure == 'if':
         _, test_expression, then_expression, else_expression = expression
         return evaluate(then_expression) if evaluate(test_expression) else evaluate(else_expression)
-    elif expression[0] == 'define':
-        environment.add(expression[1], evaluate(expression[2]))
+    elif procedure == 'define':
+        parameter, value = arguments
+        environment.add(parameter, evaluate(value))
         return None  # want to be explicit about returning None here
-    elif expression[0] == 'lambda':  # user-defined procedure
-        parameters = expression[1]
-        body = expression[2]
+    elif procedure == 'lambda':  # user-defined procedure
+        parameters, body = arguments
         return Procedure(parameters, body, Environment(parent=environment))
     else:  # procedure call
-        procedure = evaluate(expression[0])
-        arguments = [evaluate(a, environment) for a in expression[1:]]
+        procedure = evaluate(procedure)
+        arguments = [evaluate(a, environment) for a in arguments]
         if not callable(procedure):
             raise SyntaxError(f"{procedure} not a valid procedure")  # this should not happen but needed for typing
         return procedure(arguments)
