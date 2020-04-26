@@ -126,10 +126,10 @@ def evaluate(expression, environment: Environment = GLOBAL_ENV) -> Optional[Unio
     procedure, *arguments = expression
     if procedure == 'if':
         _, test_expression, then_expression, else_expression = expression
-        return evaluate(then_expression) if evaluate(test_expression) else evaluate(else_expression)
+        return evaluate(then_expression, environment) if evaluate(test_expression, environment) else evaluate(else_expression, environment)
     elif procedure == 'define':
         parameter, value = arguments
-        environment.add(parameter, evaluate(value))
+        environment.add(parameter, evaluate(value, environment))
         return None  # want to be explicit about returning None here
     elif procedure == 'lambda':  # user-defined procedure
         parameters, body = arguments
