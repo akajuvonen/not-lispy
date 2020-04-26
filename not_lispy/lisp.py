@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import operator
+from abc import ABC, abstractmethod
 from collections import deque
 from typing import Any, Callable, Deque, Dict, List, Optional, Union
 
@@ -21,10 +22,16 @@ class Symbol(Atom, str):
 
 
 @attr.s(auto_attribs=True)
-class Operation():
-    """A primitive operation that can be applied to arbitrary number of arguments."""
+class Operation(ABC):
     function: Callable
 
+    @abstractmethod
+    def __call__(self, arguments: List[Integer]):
+        pass
+
+
+@attr.s()
+class VariadricOperation(Operation):
     def __call__(self, arguments: List[Integer]) -> Integer:
         """Apply a given function to all arguments one by one."""
         result = arguments[0]
@@ -33,10 +40,23 @@ class Operation():
         return Integer(result)
 
 
-ENV = {Symbol('+'): Operation(operator.add),
-       Symbol('-'): Operation(operator.sub),
-       Symbol('*'): Operation(operator.mul),
-       Symbol('/'): Operation(operator.floordiv)}
+@attr.s()
+class BinaryOperation(Operation):
+    def __call__(self, arguments: List[Integer]):
+        if len(arguments) != 2:
+            raise TypeError(f'Expected 2 arguments, got {len(arguments)}')
+        return self.function(*arguments)
+
+
+ENV = {Symbol('+'): VariadricOperation(operator.add),
+       Symbol('-'): VariadricOperation(operator.sub),
+       Symbol('*'): VariadricOperation(operator.mul),
+       Symbol('/'): VariadricOperation(operator.floordiv),
+       Symbol('>'): BinaryOperation(operator.gt),
+       Symbol('<'): BinaryOperation(operator.lt),
+       Symbol('>='): BinaryOperation(operator.ge),
+       Symbol('<='): BinaryOperation(operator.le),
+       Symbol('='): BinaryOperation(operator.eq)}
 
 
 @attr.s(auto_attribs=True)
@@ -51,7 +71,10 @@ class Environment:
         try:
             return self.environment[name]
         except KeyError:
-            self.parent.get(name)
+            return self.parent.get(name)
+
+
+GLOBAL_ENV = Environment(environment=ENV)
 
 
 @attr.s(auto_attribs=True)
@@ -97,23 +120,25 @@ def _parse(current_token: str, remaining_tokens: Deque[str]) -> Union[List, Atom
             return Symbol(current_token)
 
 
-def evaluate(expression, environment: Environment = None) -> Optional[Union[Integer, Callable]]:
-    if environment is None:
-        environment = Environment(environment=ENV)
+def evaluate(expression, environment: Environment = GLOBAL_ENV) -> Optional[Union[Integer, Callable]]:
     if isinstance(expression, Integer):  # number
         return expression
     elif isinstance(expression, Symbol):  # symbol lookup
         return environment.get(expression)
-    elif expression[0] == 'define':
-        environment.add(expression[1], evaluate(expression[2]))
+    form, *arguments = expression
+    if form == 'if':
+        _, test_expression, then_expression, else_expression = expression
+        return evaluate(then_expression, environment) if evaluate(test_expression, environment) else evaluate(else_expression, environment)
+    elif form == 'define':
+        parameter, value = arguments
+        environment.add(parameter, evaluate(value, environment))
         return None  # want to be explicit about returning None here
-    elif expression[0] == 'lambda':  # user-defined procedure
-        parameters = expression[1]
-        body = expression[2]
+    elif form == 'lambda':  # user-defined form
+        parameters, body = arguments
         return Procedure(parameters, body, Environment(parent=environment))
     else:  # procedure call
-        procedure = evaluate(expression[0])
-        arguments = [evaluate(a, environment) for a in expression[1:]]
+        procedure = evaluate(form, environment)
+        arguments = [evaluate(a, environment) for a in arguments]
         if not callable(procedure):
             raise SyntaxError(f"{procedure} not a valid procedure")  # this should not happen but needed for typing
         return procedure(arguments)
