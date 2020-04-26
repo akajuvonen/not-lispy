@@ -123,19 +123,19 @@ def evaluate(expression, environment: Environment = GLOBAL_ENV) -> Optional[Unio
         return expression
     elif isinstance(expression, Symbol):  # symbol lookup
         return environment.get(expression)
-    procedure, *arguments = expression
-    if procedure == 'if':
+    form, *arguments = expression
+    if form == 'if':
         _, test_expression, then_expression, else_expression = expression
         return evaluate(then_expression, environment) if evaluate(test_expression, environment) else evaluate(else_expression, environment)
-    elif procedure == 'define':
+    elif form == 'define':
         parameter, value = arguments
         environment.add(parameter, evaluate(value, environment))
         return None  # want to be explicit about returning None here
-    elif procedure == 'lambda':  # user-defined procedure
+    elif form == 'lambda':  # user-defined form
         parameters, body = arguments
         return Procedure(parameters, body, Environment(parent=environment))
-    else:  # procedure call
-        procedure = evaluate(procedure)
+    else:  # form call
+        procedure = evaluate(form)
         arguments = [evaluate(a, environment) for a in arguments]
         if not callable(procedure):
             raise SyntaxError(f"{procedure} not a valid procedure")  # this should not happen but needed for typing
