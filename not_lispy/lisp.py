@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import operator
+from abc import ABC, abstractmethod
 from collections import deque
 from typing import Any, Callable, Deque, Dict, List, Optional, Union
 
@@ -21,9 +22,10 @@ class Symbol(Atom, str):
 
 
 @attr.s(auto_attribs=True)
-class Operation():
+class Operation(ABC):
     function: Callable
 
+    @abstractmethod
     def __call__(self, arguments: List[Integer]):
         pass
 
