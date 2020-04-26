@@ -128,7 +128,10 @@ def evaluate(expression, environment: Environment = GLOBAL_ENV) -> Optional[Unio
     form, *arguments = expression
     if form == 'if':
         _, test_expression, then_expression, else_expression = expression
-        return evaluate(then_expression, environment) if evaluate(test_expression, environment) else evaluate(else_expression, environment)
+        if evaluate(test_expression, environment):
+            return evaluate(then_expression, environment)
+        else:
+            return evaluate(else_expression, environment)
     elif form == 'define':
         parameter, value = arguments
         environment.add(parameter, evaluate(value, environment))
