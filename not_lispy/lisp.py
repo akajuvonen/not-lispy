@@ -22,9 +22,14 @@ class Symbol(Atom, str):
 
 @attr.s(auto_attribs=True)
 class Operation():
-    """A primitive operation that can be applied to arbitrary number of arguments."""
     function: Callable
 
+    def __call__(self, arguments:List[Integer]):
+        pass
+
+
+@attr.s()
+class VariadricOperation(Operation):
     def __call__(self, arguments: List[Integer]) -> Integer:
         """Apply a given function to all arguments one by one."""
         result = arguments[0]
@@ -33,10 +38,23 @@ class Operation():
         return Integer(result)
 
 
-ENV = {Symbol('+'): Operation(operator.add),
-       Symbol('-'): Operation(operator.sub),
-       Symbol('*'): Operation(operator.mul),
-       Symbol('/'): Operation(operator.floordiv)}
+@attr.s()
+class BinaryOperation(Operation):
+    def __call__(self, arguments: List[Integer]):
+        if len(arguments) != 2:
+            raise TypeError(f'Expected 2 arguments, got {len(arguments)}')
+        return self.function(*arguments)
+
+
+ENV = {Symbol('+'): VariadricOperation(operator.add),
+       Symbol('-'): VariadricOperation(operator.sub),
+       Symbol('*'): VariadricOperation(operator.mul),
+       Symbol('/'): VariadricOperation(operator.floordiv),
+       Symbol('>'): BinaryOperation(operator.gt),
+       Symbol('<'): BinaryOperation(operator.lt),
+       Symbol('>='): BinaryOperation(operator.ge),
+       Symbol('<='): BinaryOperation(operator.le),
+       Symbol('='): BinaryOperation(operator.eq)}
 
 
 @attr.s(auto_attribs=True)
@@ -104,6 +122,12 @@ def evaluate(expression, environment: Environment = None) -> Optional[Union[Inte
         return expression
     elif isinstance(expression, Symbol):  # symbol lookup
         return environment.get(expression)
+    elif expression[0] == 'if':
+        _, test_expression, then_expression, else_expression = expression
+        if evaluate(test_expression):
+            return evaluate(then_expression)
+        else:
+            return evaluate(else_expression)
     elif expression[0] == 'define':
         environment.add(expression[1], evaluate(expression[2]))
         return None  # want to be explicit about returning None here
