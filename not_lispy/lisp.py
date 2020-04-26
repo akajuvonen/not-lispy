@@ -24,7 +24,7 @@ class Symbol(Atom, str):
 class Operation():
     function: Callable
 
-    def __call__(self, arguments:List[Integer]):
+    def __call__(self, arguments: List[Integer]):
         pass
 
 
