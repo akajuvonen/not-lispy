@@ -72,6 +72,9 @@ class Environment:
             self.parent.get(name)
 
 
+GLOBAL_ENV = Environment(environment=ENV)
+
+
 @attr.s(auto_attribs=True)
 class Procedure:
     """User-defined procedure."""
@@ -115,9 +118,7 @@ def _parse(current_token: str, remaining_tokens: Deque[str]) -> Union[List, Atom
             return Symbol(current_token)
 
 
-def evaluate(expression, environment: Environment = None) -> Optional[Union[Integer, Callable]]:
-    if environment is None:
-        environment = Environment(environment=ENV)
+def evaluate(expression, environment: Environment = GLOBAL_ENV) -> Optional[Union[Integer, Callable]]:
     if isinstance(expression, Integer):  # number
         return expression
     elif isinstance(expression, Symbol):  # symbol lookup
