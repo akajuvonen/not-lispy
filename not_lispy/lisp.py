@@ -134,7 +134,7 @@ def evaluate(expression, environment: Environment = GLOBAL_ENV) -> Optional[Unio
     elif form == 'lambda':  # user-defined form
         parameters, body = arguments
         return Procedure(parameters, body, Environment(parent=environment))
-    else:  # form call
+    else:  # procedure call
         procedure = evaluate(form)
         arguments = [evaluate(a, environment) for a in arguments]
         if not callable(procedure):
