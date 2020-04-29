@@ -28,7 +28,7 @@ class Operation():
     def __call__(self, *arguments):
         try:
             result = self.function(*arguments)
-        except TypeError:
+        except TypeError:  # some operations in Python only accept two arguments, in Lisp can accept many (e.g., addition)
             result = arguments[0]
             for argument in arguments[1:]:
                 result = self.function(result, argument)
@@ -71,7 +71,7 @@ class Procedure:
     body: List[Atom]
     environment: Environment
 
-    def __call__(self, arguments: List[Integer]) -> Optional[Union[Integer, Callable]]:
+    def __call__(self, *arguments: Tuple[Integer]) -> Optional[Union[Integer, Callable]]:
         for parameter, value in zip(self.parameters, arguments):
             self.environment.add(parameter, value)
         return evaluate(self.body, self.environment)
