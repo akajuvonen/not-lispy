@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import operator
-from abc import ABC, abstractmethod
 from collections import deque
-from typing import Any, Callable, Deque, Dict, List, Optional, Union
+from typing import Any, Callable, Deque, Dict, List, Optional, Tuple, Union
 
 import attr
 import click
@@ -25,10 +24,10 @@ class Symbol(Atom, str):
 class Operation():
     function: Callable
 
-    def __call__(self, *arguments):
+    def __call__(self, *arguments: Tuple[Integer]) -> Integer:
         try:
             result = self.function(*arguments)
-        except TypeError:  # some operations in Python only accept two arguments, in Lisp can accept many (e.g., addition)
+        except TypeError:  # some operations in Python only accept two arguments, in Lisp can accept many
             result = arguments[0]
             for argument in arguments[1:]:
                 result = self.function(result, argument)
