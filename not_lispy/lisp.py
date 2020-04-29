@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import operator
-from abc import ABC, abstractmethod
 from collections import deque
-from typing import Any, Callable, Deque, Dict, List, Optional, Union
+from typing import Any, Callable, Deque, Dict, List, Optional, Tuple, Union
 
 import attr
 import click
@@ -22,41 +21,28 @@ class Symbol(Atom, str):
 
 
 @attr.s(auto_attribs=True)
-class Operation(ABC):
+class Operation():
     function: Callable
 
-    @abstractmethod
-    def __call__(self, arguments: List[Integer]):
-        pass
-
-
-@attr.s()
-class VariadricOperation(Operation):
-    def __call__(self, arguments: List[Integer]) -> Integer:
-        """Apply a given function to all arguments one by one."""
-        result = arguments[0]
-        for argument in arguments[1:]:
-            result = self.function(result, argument)
+    def __call__(self, *arguments: Tuple[Integer]) -> Integer:
+        try:
+            result = self.function(*arguments)
+        except TypeError:  # some operations in Python only accept two arguments, in Lisp can accept many
+            result = arguments[0]
+            for argument in arguments[1:]:
+                result = self.function(result, argument)
         return Integer(result)
 
 
-@attr.s()
-class BinaryOperation(Operation):
-    def __call__(self, arguments: List[Integer]):
-        if len(arguments) != 2:
-            raise TypeError(f'Expected 2 arguments, got {len(arguments)}')
-        return self.function(*arguments)
-
-
-ENV = {Symbol('+'): VariadricOperation(operator.add),
-       Symbol('-'): VariadricOperation(operator.sub),
-       Symbol('*'): VariadricOperation(operator.mul),
-       Symbol('/'): VariadricOperation(operator.floordiv),
-       Symbol('>'): BinaryOperation(operator.gt),
-       Symbol('<'): BinaryOperation(operator.lt),
-       Symbol('>='): BinaryOperation(operator.ge),
-       Symbol('<='): BinaryOperation(operator.le),
-       Symbol('='): BinaryOperation(operator.eq)}
+ENV = {Symbol('+'): Operation(operator.add),
+       Symbol('-'): Operation(operator.sub),
+       Symbol('*'): Operation(operator.mul),
+       Symbol('/'): Operation(operator.floordiv),
+       Symbol('>'): Operation(operator.gt),
+       Symbol('<'): Operation(operator.lt),
+       Symbol('>='): Operation(operator.ge),
+       Symbol('<='): Operation(operator.le),
+       Symbol('='): Operation(operator.eq)}
 
 
 @attr.s(auto_attribs=True)
@@ -84,7 +70,7 @@ class Procedure:
     body: List[Atom]
     environment: Environment
 
-    def __call__(self, arguments: List[Integer]) -> Optional[Union[Integer, Callable]]:
+    def __call__(self, *arguments: Tuple[Integer]) -> Optional[Union[Integer, Callable]]:
         for parameter, value in zip(self.parameters, arguments):
             self.environment.add(parameter, value)
         return evaluate(self.body, self.environment)
@@ -141,10 +127,10 @@ def evaluate(expression, environment: Environment = GLOBAL_ENV) -> Optional[Unio
         return Procedure(parameters, body, Environment(parent=environment))
     else:  # procedure call
         procedure = evaluate(form, environment)
-        arguments = [evaluate(a, environment) for a in arguments]
+        arguments = (evaluate(a, environment) for a in arguments)
         if not callable(procedure):
             raise SyntaxError(f"{procedure} not a valid procedure")  # this should not happen but needed for typing
-        return procedure(arguments)
+        return procedure(*arguments)
 
 
 @click.command()
