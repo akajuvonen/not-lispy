@@ -44,7 +44,8 @@ ENV = {Symbol('+'): Operation(operator.add),
        Symbol('<='): Operation(operator.le),
        Symbol('='): Operation(operator.eq),
        Symbol('min'): Operation(min),
-       Symbol('max'): Operation(max)}
+       Symbol('max'): Operation(max),
+       Symbol('modulo'): Operation(operator.mod)}
 
 
 @attr.s(auto_attribs=True)
