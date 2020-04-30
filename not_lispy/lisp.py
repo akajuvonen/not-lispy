@@ -42,7 +42,9 @@ ENV = {Symbol('+'): Operation(operator.add),
        Symbol('<'): Operation(operator.lt),
        Symbol('>='): Operation(operator.ge),
        Symbol('<='): Operation(operator.le),
-       Symbol('='): Operation(operator.eq)}
+       Symbol('='): Operation(operator.eq),
+       Symbol('min'): Operation(min),
+       Symbol('max'): Operation(max)}
 
 
 @attr.s(auto_attribs=True)
