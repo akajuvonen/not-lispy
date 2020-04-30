@@ -3,6 +3,7 @@ from __future__ import annotations
 import operator
 from collections import deque
 from typing import Any, Callable, Deque, Dict, List, Optional, Tuple, Union
+from math import gcd
 
 import attr
 import click
@@ -42,7 +43,11 @@ ENV = {Symbol('+'): Operation(operator.add),
        Symbol('<'): Operation(operator.lt),
        Symbol('>='): Operation(operator.ge),
        Symbol('<='): Operation(operator.le),
-       Symbol('='): Operation(operator.eq)}
+       Symbol('='): Operation(operator.eq),
+       Symbol('min'): Operation(min),
+       Symbol('max'): Operation(max),
+       Symbol('modulo'): Operation(operator.mod),
+       Symbol('gcd'): Operation(gcd)}
 
 
 @attr.s(auto_attribs=True)
