@@ -10,6 +10,7 @@ from not_lispy import read, evaluate
                                                ('(if (> 3 2) 1 0)', 1),
                                                ('(min 3 2 1)', 1),
                                                ('(max 3 4 5)', 5),
-                                               ('(modulo 10 8)', 2)])
+                                               ('(modulo 10 8)', 2),
+                                               ('(gcd 12 4 8)', 4)])
 def test_read_eval(program, expected):
     assert evaluate(read(program)) == expected

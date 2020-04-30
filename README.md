@@ -19,8 +19,9 @@ The only available number types are integers since I'm aiming for simplicity at 
 - division `/` (note: since only integers available, this is floor division, i.e., `(/ 3 2) => 1`)
 
 In addition, the following arithmetic operations can be used:
-- modulo `(modulo 10 8) => 2`
-- min and max, e.g., `(max 1 2 3) => 3`
+- modulo: `(modulo 10 8) => 2`
+- min and max: `(max 1 2 3) => 3`
+- greatest common divisor: `(gcd 8 4 12) => 4`
 
 Custom procedures are supported using `lambda`. All procedures must be defined exactly `(lambda (parameters) (body))`, parentheses should not be omitted (no implicit lists).
 
