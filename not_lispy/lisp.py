@@ -139,7 +139,7 @@ def evaluate(expression, environment: Environment = GLOBAL_ENV) -> Optional[Unio
 
 
 def read_lines_from_file(filename: str) -> List[str]:
-    with open (filename) as f:
+    with open(filename) as f:
         content = f.read()
     return list(filter(None, content.split('\n')))
 
