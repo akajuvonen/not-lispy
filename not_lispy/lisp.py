@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import operator
 from collections import deque
-from typing import Any, Callable, Deque, Dict, List, Optional, Tuple, Union
 from math import gcd
+from typing import Any, Callable, Deque, Dict, List, Optional, Tuple, Union
 
 import attr
 import click
@@ -138,7 +138,17 @@ def evaluate(expression, environment: Environment = GLOBAL_ENV) -> Optional[Unio
         return procedure(*arguments)
 
 
+def read_lines_from_file(filename: str) -> List[str]:
+    with open(filename) as f:
+        content = f.read()
+    return list(filter(None, content.split('\n')))
+
+
 @click.command()
 @click.argument('filename')
 def execute(filename):
-    print(f'TODO: load and execute program {filename}')
+    expressions = read_lines_from_file(filename)
+    for expression in expressions:
+        result = evaluate(read(expression))
+        if result is not None:
+            print(result)
