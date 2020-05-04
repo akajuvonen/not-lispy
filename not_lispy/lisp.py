@@ -141,7 +141,7 @@ def evaluate(expression, environment: Environment = GLOBAL_ENV) -> Optional[Unio
         [filename] = arguments
         expressions = _read_lines_from_file(filename)
         for expression in expressions:
-            result = evaluate(read(expression))
+            evaluate(read(expression))
     else:  # procedure call
         procedure = evaluate(form, environment)
         arguments = (evaluate(a, environment) for a in arguments)
