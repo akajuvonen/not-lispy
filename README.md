@@ -25,6 +25,12 @@ In addition, the following arithmetic operations can be used:
 - min and max: `(max 1 2 3) => 3`
 - greatest common divisor: `(gcd 8 4 12) => 4`
 
+The following operations are implemented in a small standard library in `standard_library/stl.lisp`:
+- factorial: `(fact 3) => 6`
+- lowest common multiplier: `(lcm 2 3 4) => 12`
+
+The above standard library is automatically loaded for repl. For any code loaded from a file, stl or any other file containing definitions can be loaded with `(load filename)`, e.g., `(load standard_library/stl.lisp)`. Note that due to lack of `String` type, `filename` must **not** be enclosed in double quotes.
+
 Custom procedures are supported using `lambda`. All procedures must be defined exactly `(lambda (parameters) (body))`, parentheses should not be omitted (no implicit lists).
 
 Variables and procedures can be defined using `define`, e.g.,
