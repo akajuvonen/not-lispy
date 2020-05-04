@@ -24,8 +24,11 @@ class Symbol(Atom, str):
 @attr.s(auto_attribs=True)
 class Operation():
     function: Callable
+    n_arguments: int = 0
 
     def __call__(self, *arguments: Tuple[Integer]) -> Integer:
+        if self.n_arguments and len(arguments) != self.n_arguments:
+            raise ValueError(f'Expected {self.n_arguments} arguments, got {len(arguments)}')
         try:
             result = self.function(*arguments)
         except TypeError:  # some operations in Python only accept two arguments, in Lisp can accept many
@@ -39,14 +42,14 @@ ENV = {Symbol('+'): Operation(operator.add),
        Symbol('-'): Operation(operator.sub),
        Symbol('*'): Operation(operator.mul),
        Symbol('/'): Operation(operator.floordiv),
-       Symbol('>'): Operation(operator.gt),
-       Symbol('<'): Operation(operator.lt),
-       Symbol('>='): Operation(operator.ge),
-       Symbol('<='): Operation(operator.le),
-       Symbol('='): Operation(operator.eq),
+       Symbol('>'): Operation(operator.gt, n_arguments=2),
+       Symbol('<'): Operation(operator.lt, n_arguments=2),
+       Symbol('>='): Operation(operator.ge, n_arguments=2),
+       Symbol('<='): Operation(operator.le, n_arguments=2),
+       Symbol('='): Operation(operator.eq, n_arguments=2),
        Symbol('min'): Operation(min),
        Symbol('max'): Operation(max),
-       Symbol('modulo'): Operation(operator.mod),
+       Symbol('modulo'): Operation(operator.mod, n_arguments=2),
        Symbol('gcd'): Operation(gcd)}
 
 
@@ -76,6 +79,10 @@ class Procedure:
     environment: Environment
 
     def __call__(self, *arguments: Tuple[Integer]) -> Optional[Union[Integer, Callable]]:
+        n_expected_arguments = len(self.parameters)
+        n_actual_arguments = len(arguments)
+        if not n_expected_arguments == n_actual_arguments:
+            raise ValueError(f'Expected {n_expected_arguments} arguments, got {n_actual_arguments}')
         for parameter, value in zip(self.parameters, arguments):
             self.environment.add(parameter, value)
         return evaluate(self.body, self.environment)
