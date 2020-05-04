@@ -27,7 +27,7 @@ In addition, the following arithmetic operations can be used:
 
 The following operations are implemented in a small standard library in `standard_library/stl.lisp`:
 - factorial: `(fact 3) => 6`
-- lowest common multiplier: `(lcm 2 3 4) => 12`
+- lowest common multiplier: `(lcm 3 4) => 12` (for now supports only two arguments until variadic custom procedures are implemented)
 
 The above standard library is automatically loaded for repl. For any code loaded from a file, stl or any other file containing definitions can be loaded with `(load filename)`, e.g., `(load standard_library/stl.lisp)`. Note that due to lack of `String` type, `filename` must **not** be enclosed in double quotes.
 
