@@ -131,7 +131,10 @@ def evaluate(expression, environment: Environment = GLOBAL_ENV) -> Optional[Unio
         parameters, body = arguments
         return Procedure(parameters, body, Environment(parent=environment))
     elif form == 'load':
-        evaluate_file(arguments)
+        [filename] = arguments
+        expressions = _read_lines_from_file(filename)
+        for expression in expressions:
+            result = evaluate(read(expression))
     else:  # procedure call
         procedure = evaluate(form, environment)
         arguments = (evaluate(a, environment) for a in arguments)
@@ -146,15 +149,11 @@ def _read_lines_from_file(filename: str) -> List[str]:
     return list(filter(None, content.split('\n')))
 
 
-def evaluate_file(filename: str):
+@click.command()
+@click.argument('filename')
+def execute(filename):
     expressions = _read_lines_from_file(filename)
     for expression in expressions:
         result = evaluate(read(expression))
         if result is not None:
             print(result)
-
-
-@click.command()
-@click.argument('filename')
-def execute(filename):
-    evaluate_file(filename)
